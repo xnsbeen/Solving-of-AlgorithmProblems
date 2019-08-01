@@ -11,77 +11,57 @@
 
 using namespace std;
 
-int res[6][6];
-int arr[6][6];
+vector<vector<int>> res(6,vector<int>(6));
+vector<vector<int>> arr(6,vector<int>(6));
 int n;
 
-void multy1(){
-	int temp [6][6];
-	for(int i=0;i<n;++i)
-		for(int j=0;j<n;++j)
-			temp[i][j]=res[i][j];
-	
-	for(int i=0;i<n;++i)
-		for(int j=0;j<n;++j)
-			for(int k=0;k<n;++k){
-				temp[i][k] = res[i][k]+arr[k][j];
-			}
-	for(int i=0;i<n;++i)
-		for(int j=0;j<n;++j)
-			res[i][j]=temp[i][j];
-}
+vector<vector<int>> multy(long long int b){
+	vector<vector<int>> temp(6,vector<int>(6));
+	vector<vector<int>> temp2(6,vector<int>(6));
 
-
-void multy2(){
-	int temp [6][6];
-	for(int i=0;i<n;++i)
-		for(int j=0;j<n;++j)
-			temp[i][j]=0;
-	
-	for(int i=0;i<n;++i)
-		for(int j=0;j<n;++j)
-			for(int k=0;k<n;++k){
-				temp[i][k] += res[i][k]*res[k][j];
-			}
-	for(int i=0;i<n;++i)
-		for(int j=0;j<n;++j)
-			res[i][j]=temp[i][j];
-}
-
-int main(int argc, char* argv[]) {
-	int b;
-	vector<int>vec;
-	cin>>n>>b;
 	for(int i=0;i<n;++i)
 		for(int j=0;j<n;++j){
+			temp2[i][j]=0;
+		}
+	
+	if(b==1) return arr;
+	if(b%2==1){
+		temp = multy(b-1);
+		for(int i=0;i<n;++i)
+			for(int j=0;j<n;++j)
+				for(int k=0;k<n;++k){
+					temp2[i][j] += ((arr[i][k]%1000)*(temp[k][j]%1000))%1000;
+					temp2[i][j]%=1000;
+				}
+	}
+	else{
+		temp =multy(b/2);
+		for(int i=0;i<n;++i)
+			for(int j=0;j<n;++j)
+				for(int k=0;k<n;++k){
+					temp2[i][j] += ((temp[i][k]%1000)*(temp[k][j]%1000))%1000;
+					temp2[i][j]%=1000;
+			}
+	}
+	return temp2;
+}
+
+
+
+int main(int argc, char* argv[]) {
+	long long int b; // 문제 제대로 보자
+	cin>>n>>b;
+	for(int i=0;i<n;++i)
+		for(int j=0;j<n;++j)
+		{
 			scanf("%d",&arr[i][j]);
 			res[i][j] = arr[i][j];
 		}
 	
-	while(1){
-		if(b==1) {
-			break;
-		}
-		if(b%2==0) {
-			b/=2;
-			vec.push_back(2);
-		}
-		else{
-			b--;
-			vec.push_back(1);
-		}
-		
-	}
-	
-	for(int i=vec.size()-1;i>=0;--i){
-		cout<<vec[i]<<endl;
-		if(vec[i]==1) multy1();
-		else multy2();
-	}
-	
+	res = multy(b);
 	for(int i=0;i<n;++i){
 		for(int j=0;j<n;++j){
-			printf("%d ",res[i][j]);
+			printf("%d ",res[i][j]%1000);
 		}
 		printf("\n");
 	}
