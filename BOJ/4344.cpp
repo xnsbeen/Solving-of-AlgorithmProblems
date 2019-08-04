@@ -27,7 +27,9 @@ int main(int argc, char* argv[]) {
 		for(int i=0;i<n;++i)
 			if(sum/n<arr[i]) cnt++;
 		ratio = 100*cnt/n;
-		cout<<round(ratio*1000)/1000<<'%'<<endl;
+		cout<<fixed; // 소숫점 아래 자릿수 고정한다.
+		cout.precision(3); // 소숫점 아래를 3으로 고정한다.
+		cout<<ratio<<'%'<<endl;
 	}
 	return 0;
 }
