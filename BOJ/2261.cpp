@@ -11,39 +11,51 @@
 #include <set>
 using namespace std;
 
-vector<pair<int,int> >vec;
+#define INF 1987654321;
+typedef pair<int,int> pii;
 
-bool cmp(pair<int,int>&a, pair<int,int>&b){
+vector<pii>vec;
+
+bool cmpx(const pii &a,const pii &b){
 	return a.first<b.first;
 }
+bool cmpy(const pii &a,const pii &b){
+	return a.second<b.second;
+}
 
-int dist(pair<int,int> a,pair<int,int>b){
+int dist(pii a, pii b){
 	return (a.first-b.first)*(a.first-b.first)+(a.second-b.second)*(a.second-b.second);
 } 
 
-int shottestLine(int start,int end ){
-	if(end == 2) return dist(vec[0],vec[1]);
-	if(end == 3) return min(min(dist(vec[0],vec[1]),dist(vec[0],vec[2])),dist(vec[1],vec[2]));
-	int minn = 1987654321;
+int shottestLine(int start,int end,int n){
+	if(n == 1) return INF;
+	if(n == 2) return dist(vec[start],vec[end]);
+	if(n == 3) return min(min(dist(vec[start],vec[start+1]),dist(vec[start+1],vec[start+2])),dist(vec[start],vec[start+2]));
 	int mid = (start+end)/2;
-	int mid_line = (vec[start].first+vec[end].first)/2;
-	minn = min(shottestLine(start,mid),shottestLine(mid+1,end));
+	int lineX = (vec[mid].first+vec[mid+1].first)/2;
+	int d = min(shottestLine(start,mid,mid-start),shottestLine(mid,end,end-mid));
+	vector<pii>avail;
 	
-	int pos_left = lower_bound(vec.begin(),vec.end(),mid_line-sqrt(minn),cmp);
-	int pos_right = lower_bound(vec.begin(),vec.end(),mid_line+sqrt(minn),cmp);
+	for(int i=start;i<end;++i)
+		if((lineX-vec[i].first)*(lineX-vec[i].first)<d)
+			avail.push_back(vec[i]);
+	sort(vec.begin(),vec.end(),cmpy);
+	for(int i=0;i<avail.size()-1;++i)
+		for(int j=i+1;j<avail.size()&&j<i+7;++j)
+			d=min(d,dist(avail[i],avail[j]));
+	
+	return d;
 }
 
 int main(int argc, char* argv[]) {
 	int n;
-	int res;
 	scanf("%d",&n);
-	while(n--){
+	for(int i=0;i<n;++i){
 		int a,b;
 		scanf("%d %d",&a,&b);
 		vec.push_back({a,b});
 	}
-	sort(vec.begin(),vec.end());
-	res = min(0,n);
-	
+	sort(vec.begin(),vec.end(),cmpx);
+	cout<<shottestLine(0,n,n)<<endl;
 	return 0;
 }
